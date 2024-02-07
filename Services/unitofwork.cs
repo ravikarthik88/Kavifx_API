@@ -6,26 +6,12 @@ namespace Kavifx_API.Services
     public class unitofwork
     {
         UserRepository userRepo;
-        UserProfileRepository profileRepo;
-        RoleRepository roleRepo;
-        userRepository userRoleRepo;
-        PermissionRepository permissionRepo;
-        RolePermissionRepository rolePermissionRepos;
+        UserService _user;
         KavifxDbContext context;
 
-        public unitofwork(UserRepository userRepository, UserProfileRepository profileRepository,
-             RoleRepository roleRepository,userRepository userRoleRepository,
-             PermissionRepository permissionRepository, RolePermissionRepository rolePermissionRepository,
-             KavifxDbContext dbContext
-            )
+        public unitofwork(KavifxDbContext dbContext)
         {
-            userRepo = userRepository;
-            profileRepo = profileRepository;
-            roleRepo = roleRepository;
-            userRoleRepo = userRoleRepository;
-            permissionRepo = permissionRepository;
-            rolePermissionRepos = rolePermissionRepository;
-            context= dbContext;
+            context = dbContext;
         }
 
         public UserRepository repo
@@ -33,20 +19,10 @@ namespace Kavifx_API.Services
             get{
                 if(userRepo ==null)
                 {
-                    userRepo = new userRepository(context);
+                    userRepo = new UserRepository(context);
                 };
                 return userRepo;
             }
-        }
-        public RoleRepository profile
-        {
-            get
-            {
-                if (profileRepo == null)
-                {
-                    profileRepo = new profileRepository(context);
-                }
-                return profileRepo;
         }
 
     }

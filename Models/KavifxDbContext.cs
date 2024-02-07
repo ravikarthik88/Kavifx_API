@@ -26,18 +26,18 @@ namespace Kavifx_API.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; } = "User";
-        public bool IsDeleted { get; set; }
+        public string Role { get; set; }
+        public string ProfilePictureUrl { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class UserProfile
     {
         [Key]
-        public int UserProfileId { get; set; }        
+        public int UserProfileId { get; set; }
         public int UserId { get; set; }
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public string PictureUrl { get; set; }
+        public DateTime UploadedAt { get; set; }
         public bool IsDeleted { get; set; }
     }
 
@@ -46,7 +46,7 @@ namespace Kavifx_API.Models
         [Key]
         public int RoleId { get; set; }
         public string RoleName { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class UserRole
@@ -59,7 +59,7 @@ namespace Kavifx_API.Models
         public int RoleId { get; set; }
         [ForeignKey("RoleId")]
         public Role Role { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class Permission
@@ -67,7 +67,7 @@ namespace Kavifx_API.Models
         [Key]
         public int PermissionId { get; set; }
         public string PermissionName { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class RolePermission
@@ -80,6 +80,6 @@ namespace Kavifx_API.Models
         public Role Role { get; set; }
         [ForeignKey("PermissionId")]
         public Permission Permission { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }
