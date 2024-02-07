@@ -27,6 +27,7 @@ namespace Kavifx_API.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string Role { get; set; } = "User";
+        public bool IsDeleted { get; set; }
     }
 
     public class UserProfile
@@ -37,6 +38,7 @@ namespace Kavifx_API.Models
         [ForeignKey("UserId")]
         public User User { get; set; }
         public string ProfilePictureUrl { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class Role
@@ -44,6 +46,7 @@ namespace Kavifx_API.Models
         [Key]
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class UserRole
@@ -56,6 +59,7 @@ namespace Kavifx_API.Models
         public int RoleId { get; set; }
         [ForeignKey("RoleId")]
         public Role Role { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class Permission
@@ -63,6 +67,7 @@ namespace Kavifx_API.Models
         [Key]
         public int PermissionId { get; set; }
         public string PermissionName { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class RolePermission
@@ -75,5 +80,6 @@ namespace Kavifx_API.Models
         public Role Role { get; set; }
         [ForeignKey("PermissionId")]
         public Permission Permission { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

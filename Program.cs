@@ -1,3 +1,4 @@
+using Kavifx_API.Helpers;
 using Kavifx_API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ builder.Services.AddCors(c =>
     });
 });
 
+builder.Services.AddTransient<JwtMiddleware>();
 
 //Enable JWT Authentication
 byte[] keybytes = System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWTDATA:Key").Value);
@@ -74,6 +76,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseCors();
 
