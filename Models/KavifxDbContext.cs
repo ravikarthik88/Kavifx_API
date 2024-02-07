@@ -27,7 +27,6 @@ namespace Kavifx_API.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
-        public string ProfilePictureUrl { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 
@@ -39,6 +38,8 @@ namespace Kavifx_API.Models
         public string PictureUrl { get; set; }
         public DateTime UploadedAt { get; set; }
         public bool IsDeleted { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
     }
 
     public class Role
