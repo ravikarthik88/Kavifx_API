@@ -25,9 +25,9 @@ namespace Kavifx_API.Models
         public string Firstname { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public string Password { get; set; }  
         public bool IsDeleted { get; set; } = false;
+        
     }
 
     public class UserProfile
@@ -68,6 +68,7 @@ namespace Kavifx_API.Models
         [Key]
         public int PermissionId { get; set; }
         public string PermissionName { get; set; }
+        public string Description { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 
@@ -81,6 +82,30 @@ namespace Kavifx_API.Models
         public Role Role { get; set; }
         [ForeignKey("PermissionId")]
         public Permission Permission { get; set; }
+        public bool IsDeleted { get; set; } = false;
+    }
+
+    public class Menu
+    {
+        [Key]
+        public int MenuId { get; set; }
+        public string MenuName { get; set; }
+        public string Url { get; set; }
+        [ForeignKey("MenuId")]
+        public int ParentId { get; set; }
+        public bool IsDeleted { get; set; } = false;
+    }
+
+    public class RoleMenu
+    {
+        [Key]
+        public int RoleMenuId { get; set; }
+        public int RoleId { get; set; }
+        [ForeignKey("RoleId")]
+        public Role Role { get; set; }
+        public int MenuId { get; set; }
+        [ForeignKey("MenuId")]
+        public Menu Menu { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 }
