@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace Kavifx_API.Controllers
 {
-    [Route("[Action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
