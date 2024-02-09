@@ -20,6 +20,7 @@ namespace Kavifx_API.Models
         public string ConfirmPassword { get; set; }
         [Required(ErrorMessage ="Please choose a file")]
         public IFormFile ProfilePicture { get; set; }
+        public string Role { get; set; } = "User";
     }
 
   
