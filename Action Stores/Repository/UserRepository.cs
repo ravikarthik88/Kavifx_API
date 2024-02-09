@@ -11,7 +11,7 @@ namespace Kavifx_API.Action_Stores.Repository
     public class UserRepository : IRepository<UserDTO>
     {
         private readonly KavifxDbContext ctx;
-        private readonly UnitOfWork uw;
+        private UnitOfWork uw;
         public UserRepository(KavifxDbContext context,UnitOfWork unitOfWork)
         {
             ctx = context;

@@ -11,7 +11,7 @@ namespace Kavifx_API.Services.Interface
 
     public interface IAuthService
     {
-        User Authenticate(string username, string password);
+        User AuthenticateAsync(string username, string password);
         bool IsInRole(User user, string role);
     }
     public interface IUserService
@@ -63,7 +63,7 @@ namespace Kavifx_API.Services.Interface
     public interface IRepository<T> where T : class
     {
         Task<bool> Add(T entity);
-        Task<bool> Update(int id,T entity);
+        Task<bool> Update(T entity);
         Task<bool> Delete(int id);
         T GetById(int id);
         Task<List<T>> GetAll();

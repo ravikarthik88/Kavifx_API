@@ -23,7 +23,6 @@ builder.Services.AddCors(c =>
     });
 });
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Enable JWT Authentication
@@ -78,8 +77,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseMiddleware<JwtMiddleware>();
 
 app.UseCors();
 

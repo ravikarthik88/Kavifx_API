@@ -49,4 +49,10 @@ namespace Kavifx_API.Models
         public int RoleId { get; set; }
         public int PermissionId { get; set; }     
     }
+
+    public class LoginViewModel
+    {
+        public string email { get; set; }
+        public string password { get; set; }
+    }
 }
