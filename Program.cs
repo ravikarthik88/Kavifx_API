@@ -1,10 +1,14 @@
+using Kavifx_API.Action_Stores.Repository;
+using Kavifx_API.Action_Stores.Services;
 using Kavifx_API.Models;
 using Kavifx_API.Services.Interface;
 using Kavifx_API.Services.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NuGet.Protocol.Core.Types;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +26,7 @@ builder.Services.AddCors(c =>
         copl.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
-
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Enable JWT Authentication
@@ -60,6 +64,7 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kavifx_API", Version = "v1" });
 });
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
