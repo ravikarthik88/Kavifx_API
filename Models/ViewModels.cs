@@ -19,7 +19,7 @@ namespace Kavifx_API.Models
         [Required,DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
-        public IFormFile ProfilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
     }  
 
     public class RoleDTO

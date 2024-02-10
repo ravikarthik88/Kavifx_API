@@ -27,21 +27,18 @@ namespace Kavifx_API.Action_Stores.Services
             };
 
             await ctx.Users.AddAsync(user);
-
-            string UploadUrl = await UploadImage(userDTO);
+            
             var userprofile = new UserProfile
             {
                 UserId = user.UserId,
-                ProfilePictureUrl = UploadUrl
             };
 
             await ctx.UserProfiles.AddAsync(userprofile);
-
-            byte[] imageBytes = File.ReadAllBytes(UploadUrl);
+            
             var profiledata = new ProfilePicture
             {
-                PictureData = imageBytes,
-                PictureMimeType = userDTO.ProfilePicture.ContentType
+                PictureData = userDTO.ProfilePicture,
+                PictureMimeType = userDTO.ProfilePicture.
             };
 
             await ctx.Profiles.AddAsync(profiledata);
@@ -138,22 +135,22 @@ namespace Kavifx_API.Action_Stores.Services
             return false;
         }
 
-        private async Task<string> UploadImage(UserDTO userDTO)
-        {
-            var Users = ctx.Users.SingleOrDefault(x => x.Email == userDTO.Email );
+        [HttpPost]
+        public async Task<string> UploadImage(IFormFile file)
+        {           
 
-            if (userDTO.ProfilePicture != null && userDTO.ProfilePicture.Length > 0)
+            if (file != null && file.Length > 0)
             {
                 var UploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                 if (!Directory.Exists(UploadDir))
                 {
                     Directory.CreateDirectory(UploadDir);
                 }
-                var filename = Guid.NewGuid().ToString() + Path.GetExtension(userDTO.ProfilePicture.FileName);
+                var filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 var filepath = Path.Combine(UploadDir, filename);
                 using (var stream = new FileStream(filepath, FileMode.Create))
                 {
-                    await userDTO.ProfilePicture.CopyToAsync(stream);
+                    await file.CopyToAsync(stream);
                 }
                 return filepath;
             }
