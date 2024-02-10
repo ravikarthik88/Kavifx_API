@@ -7,23 +7,20 @@ namespace Kavifx_API.Models
     {
         public int UserId { get; set; }
         [Required]
-        public string Firstname { get; set; }
+        public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
         [Required,EmailAddress]
         public string Email { get; set; }
-        [Required, DataType(DataType.Password),MinLength(15)]
-        public string Password { get; set; }
         
-        [Required,DataType(DataType.Password), MinLength(15)]
-        [Compare("Password", ErrorMessage = "passwords doesnot match")]
+        [Required,DataType(DataType.Password)]
+        public string Password { get; set; }        
+        
+        [Required,DataType(DataType.Password)]
+        [Compare("Password")]
         public string ConfirmPassword { get; set; }
-        [Required(ErrorMessage ="Please choose a file")]
         public IFormFile ProfilePicture { get; set; }
-        public string Role { get; set; } = "User";
-    }
-
-  
+    }  
 
     public class RoleDTO
     {   public int RoleId { get; set; }

@@ -1,12 +1,8 @@
-﻿using Kavifx_API.Models;
+﻿using Kavifx_API.Action_Stores.Services;
+using Kavifx_API.Models;
 
 namespace Kavifx_API.Services.Interface
-{
-    public interface IUnitOfWork: IDisposable
-    {
-        Task<bool> SaveChangesAsync();
-    }
-
+{ 
     #region Services
 
     public interface IAuthService
@@ -23,8 +19,7 @@ namespace Kavifx_API.Services.Interface
         Task<bool> CreateUserAsync(UserDTO userDTO);
         Task<bool> UpdateUserAsync(int userId, UserDTO userDTO);
         Task<bool> DeleteUserAsync(int userId);
-    }
-
+    }    
     public interface IRoleService
     {
         Task<List<RoleDTO>> GetAllRolesAsync();

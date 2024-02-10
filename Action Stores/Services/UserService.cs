@@ -1,59 +1,63 @@
-﻿using Kavifx_API.Action_Stores.Repository;
-using Kavifx_API.Models;
+﻿using Kavifx_API.Models;
 using Kavifx_API.Services.Interface;
-using Kavifx_API.Services.Repository;
 using KavifxApp.Server.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using System.Text;
 
 namespace Kavifx_API.Action_Stores.Services
 {
     public class UserService : IUserService
     {
-        private readonly KavifxDbContext ctx;
-        private readonly UnitOfWork uw;
-        public UserService(KavifxDbContext context,UnitOfWork unitOfWork)
+        private readonly KavifxDbContext ctx;        
+        public UserService(KavifxDbContext context)
         {
-            ctx = context;            
+            ctx = context;
         }
 
         public async Task<bool> CreateUserAsync(UserDTO userDTO)
-        {
+        {            
             var user = new User
             {
-                Firstname = userDTO.Firstname,
+                Firstname = userDTO.FirstName,
                 LastName = userDTO.LastName,
                 Email = userDTO.Email,
-                Password = Bcrypt.Encryptpassword(userDTO.Password)
+                Password = Bcrypt.Encryptpassword(userDTO.Password)                
             };
 
             await ctx.Users.AddAsync(user);
-            await uw.SaveChangesAsync();
 
-            var pictureUrl = UploadProfilePicture(userDTO.ProfilePicture);
-
-            var profile = new UserProfile()
+            string UploadUrl = await UploadImage(userDTO);
+            var userprofile = new UserProfile
             {
                 UserId = user.UserId,
-                PictureUrl = pictureUrl,
-                UploadedAt = DateTime.Now
+                ProfilePictureUrl = UploadUrl
             };
-            await ctx.Profiles.AddAsync(profile);
-            await uw.SaveChangesAsync();
+
+            await ctx.UserProfiles.AddAsync(userprofile);
+
+            byte[] imageBytes = File.ReadAllBytes(UploadUrl);
+            var profiledata = new ProfilePicture
+            {
+                PictureData = imageBytes,
+                PictureMimeType = userDTO.ProfilePicture.ContentType
+            };
+
+            await ctx.Profiles.AddAsync(profiledata);
             return true;
         }
 
         public async Task<bool> DeleteUserAsync(int userId)
         {
-            var user = await(from c in ctx.Users
-                        where c.UserId == userId && c.IsDeleted == false
-                        select c).FirstOrDefaultAsync();
+            var user = await (from c in ctx.Users
+                              where c.UserId == userId && c.IsDeleted == false
+                              select c).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 user.IsDeleted = true;
                 ctx.Users.Update(user);
-                await uw.SaveChangesAsync();
                 return true;
             }
 
@@ -63,7 +67,7 @@ namespace Kavifx_API.Action_Stores.Services
         public bool EmailExists(string email)
         {
             var user = ctx.Users.Where(c => c.Email == email).FirstOrDefault();
-            if(user != null)
+            if (user != null)
             {
                 return true;
             }
@@ -75,45 +79,45 @@ namespace Kavifx_API.Action_Stores.Services
 
         public async Task<List<UserDTO>> GetAllUsersAsync()
         {
-            var Users = await(from c in ctx.Users
-                              where c.IsDeleted == false
-                              select new UserDTO
-                              {
-                                  UserId = c.UserId,
-                                  Firstname = c.Firstname,
-                                  LastName = c.LastName,
-                                  Email = c.Email
-                              }).ToListAsync();
+            var Users = await (from c in ctx.Users
+                               where c.IsDeleted == false
+                               select new UserDTO
+                               {
+                                   UserId = c.UserId,
+                                   FirstName = c.Firstname,
+                                   LastName = c.LastName,
+                                   Email = c.Email
+                               }).ToListAsync();
 
             return Users;
         }
 
         public async Task<UserDTO> GetUserByEmailAsync(string email)
         {
-            var user = await(from c in ctx.Users
-                             where c.Email == email && c.IsDeleted == false
-                             select new UserDTO
-                             {
-                                 UserId = c.UserId,
-                                 Firstname = c.Firstname,
-                                 LastName = c.LastName,
-                                 Email = c.Email
-                             }).FirstOrDefaultAsync();
+            var user = await (from c in ctx.Users
+                              where c.Email == email && c.IsDeleted == false
+                              select new UserDTO
+                              {
+                                  UserId = c.UserId,
+                                  FirstName = c.Firstname,
+                                  LastName = c.LastName,
+                                  Email = c.Email
+                              }).FirstOrDefaultAsync();
 
             return user;
         }
 
         public async Task<UserDTO> GetUserByIdAsync(int userId)
         {
-            var user = await(from c in ctx.Users
-                             where c.UserId == userId && c.IsDeleted == false
-                             select new UserDTO
-                             {
-                                 UserId = c.UserId,
-                                 Firstname = c.Firstname,
-                                 LastName = c.LastName,
-                                 Email = c.Email
-                             }).FirstOrDefaultAsync();
+            var user = await (from c in ctx.Users
+                              where c.UserId == userId && c.IsDeleted == false
+                              select new UserDTO
+                              {
+                                  UserId = c.UserId,
+                                  FirstName = c.Firstname,
+                                  LastName = c.LastName,
+                                  Email = c.Email
+                              }).FirstOrDefaultAsync();
 
             return user;
         }
@@ -125,34 +129,33 @@ namespace Kavifx_API.Action_Stores.Services
                               select c).FirstOrDefaultAsync();
             if (user != null)
             {
-                user.Firstname = userDTO.Firstname;
+                user.Firstname = userDTO.FirstName;
                 user.LastName = userDTO.LastName;
                 user.Email = userDTO.Email;
                 ctx.Users.Update(user);
-                await uw.SaveChangesAsync();
                 return true;
             }
             return false;
         }
 
-        private string UploadProfilePicture([FromBody] IFormFile profilePicture)
+        private async Task<string> UploadImage(UserDTO userDTO)
         {
-            if (profilePicture != null && profilePicture.Length > 0)
+            var Users = ctx.Users.SingleOrDefault(x => x.Email == userDTO.Email );
+
+            if (userDTO.ProfilePicture != null && userDTO.ProfilePicture.Length > 0)
             {
-                string UploadDir = $"~/Uploads/ProfilePictures/";
+                var UploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                 if (!Directory.Exists(UploadDir))
                 {
                     Directory.CreateDirectory(UploadDir);
                 }
-
-                var fileName = Path.GetFileName(profilePicture.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), UploadDir, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var filename = Guid.NewGuid().ToString() + Path.GetExtension(userDTO.ProfilePicture.FileName);
+                var filepath = Path.Combine(UploadDir, filename);
+                using (var stream = new FileStream(filepath, FileMode.Create))
                 {
-                    profilePicture.CopyToAsync(stream);
+                    await userDTO.ProfilePicture.CopyToAsync(stream);
                 }
-
-                return filePath;
+                return filepath;
             }
             return string.Empty;
         }

@@ -1,6 +1,8 @@
-﻿using Kavifx_API.Action_Stores.Services;
+﻿using Kavifx_API.Action_Stores;
 using Kavifx_API.Models;
+using Kavifx_API.Services.Repository;
 using KavifxApp.Server.Helpers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,16 +17,15 @@ namespace Kavifx_API.Controllers
     {
         private readonly IConfiguration config;
         private readonly KavifxDbContext ctx;
-        private readonly UserService service;
-        public AuthController(IConfiguration configuration,KavifxDbContext context, UserService Userservice)
+        private readonly UnitOfWork uw;
+        public AuthController(IConfiguration configuration,KavifxDbContext context,UnitOfWork unitOfWork)
         {
             config = configuration;
             ctx = context;
-            service = Userservice;
-
+            uw = unitOfWork;
         }
 
-        [HttpPost]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody]LoginViewModel login)
         {
             var user = await AuthenticateUser(login.email, login.password);
@@ -37,32 +38,28 @@ namespace Kavifx_API.Controllers
             return Ok(new { token });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register([FromBody] UserDTO user)
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] UserDTO model)
         {
-            if (UserExists(user.Email))
+            if (UserExists(model.Email))
             {
                 return BadRequest("User Already Exists");
             }
 
-            bool Added = await service.CreateUserAsync(user);
-            if (Added)
+            bool Added = await uw.userService.CreateUserAsync(model);
+            uw.SaveChangesAsync();
+            if(Added == true)
             {
-                string text = $"The User"+ user.Firstname + "is Added Successfully";
-
-                return Ok(new { text });
+                return Ok("User Is Added Successfully");
             }
-            else
-            {
-                string text = $"The User" + user.Firstname + "is not Added";
-                return BadRequest(new {text});
-            }
-        }
+            return BadRequest("User is not Added");
+        }      
 
         private bool UserExists(string Email)
         {
             bool IsExists = false;
-            var User = service.EmailExists(Email);
+            var User = uw.userService.EmailExists(Email);
             if (User == true) 
             {
                 IsExists = true;
@@ -89,6 +86,7 @@ namespace Kavifx_API.Controllers
 
         private string GenerateJwtToken(string email,List<string> roles)
         {
+            var refreshToken = Guid.NewGuid().ToString();
             var handler = new JwtSecurityTokenHandler();
             byte[] Keybytes = System.Text.Encoding.UTF8.GetBytes(config.GetSection("JWTDATA:Key").Value);
 
@@ -97,7 +95,8 @@ namespace Kavifx_API.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                             new Claim(ClaimTypes.Email, email),
-                            new Claim(ClaimTypes.Role, string.Join(",", roles))
+                            new Claim(ClaimTypes.Role, string.Join(",", roles)),
+                             new Claim("RefreshToken",refreshToken)
                 }),
                 Expires = DateTime.Now.AddMinutes(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Keybytes), SecurityAlgorithms.HmacSha256Signature)
@@ -127,6 +126,6 @@ namespace Kavifx_API.Controllers
                 }
             }
             return Verify;
-        }
+        }              
     }
 }

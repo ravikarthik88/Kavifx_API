@@ -1,4 +1,3 @@
-using Kavifx_API.Action_Stores.Repository;
 using Kavifx_API.Action_Stores.Services;
 using Kavifx_API.Models;
 using Kavifx_API.Services.Interface;
@@ -26,8 +25,8 @@ builder.Services.AddCors(c =>
         copl.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddTransient<UnitOfWork>();
 
 //Enable JWT Authentication
 byte[] keybytes = System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWTDATA:Key").Value);

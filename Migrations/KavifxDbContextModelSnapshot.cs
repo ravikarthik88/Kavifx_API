@@ -44,6 +44,33 @@ namespace Kavifx_API.Migrations
                     b.ToTable("Permissions");
                 });
 
+            modelBuilder.Entity("Kavifx_API.Models.ProfilePicture", b =>
+                {
+                    b.Property<int>("ProfilePicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProfilePicId"), 1L, 1);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("PictureData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("PictureMimeType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProfilePicId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Profiles");
+                });
+
             modelBuilder.Entity("Kavifx_API.Models.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -125,14 +152,8 @@ namespace Kavifx_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserProfileId"), 1L, 1);
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("ProfilePictureUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -141,7 +162,7 @@ namespace Kavifx_API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Profiles");
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Kavifx_API.Models.UserRole", b =>
@@ -168,6 +189,17 @@ namespace Kavifx_API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("Kavifx_API.Models.ProfilePicture", b =>
+                {
+                    b.HasOne("Kavifx_API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Kavifx_API.Models.RolePermission", b =>

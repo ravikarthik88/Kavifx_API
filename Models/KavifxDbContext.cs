@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Security;
+using System.Net.Mime;
 
 namespace Kavifx_API.Models
 {
@@ -10,7 +11,8 @@ namespace Kavifx_API.Models
     {
         public KavifxDbContext(DbContextOptions<KavifxDbContext> opts):base(opts) { }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserProfile> Profiles { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<ProfilePicture> Profiles { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
@@ -26,17 +28,27 @@ namespace Kavifx_API.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }  
-        public bool IsDeleted { get; set; } = false;
-        
+        public bool IsDeleted { get; set; } = false;       
+
     }
 
     public class UserProfile
     {
-        [Key]
         public int UserProfileId { get; set; }
         public int UserId { get; set; }
-        public string PictureUrl { get; set; }
-        public DateTime UploadedAt { get; set; }
+        public string ProfilePictureUrl { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
+
+    }
+
+    public class ProfilePicture
+    {
+        [Key]
+        public int ProfilePicId { get; set; }
+        public int UserId { get; set; }
+        public byte[] PictureData { get; set; }
+        public string PictureMimeType { get; set; }
         public bool IsDeleted { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
