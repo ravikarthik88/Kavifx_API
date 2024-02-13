@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kavifx_API.Models
 {
-    public class UserViewModel
-    {
-        public int UserId { get; set; }
+    public class RegisterViewModel
+    {        
         [Required]
         public string FirstName { get; set; }
         [Required]
@@ -18,10 +17,7 @@ namespace Kavifx_API.Models
         
         [Required,DataType(DataType.Password)]
         [Compare("Password")]
-        public string ConfirmPassword { get; set; }
-        [NotMapped]
-        public IFormFile ProfilePicture { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public string ConfirmPassword { get; set; }        
     }  
 
     public class RoleViewModel

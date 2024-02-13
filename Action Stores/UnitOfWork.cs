@@ -11,7 +11,7 @@ namespace Kavifx_API.Services.Repository
         private readonly KavifxDbContext _context;        
         
         UserService _userService;
-
+        RoleService _roleService;
         public UnitOfWork(KavifxDbContext context)
         {
             _context = context;            
@@ -26,6 +26,17 @@ namespace Kavifx_API.Services.Repository
                     _userService = new UserService(_context);
                 }
                 return _userService;
+            }
+        }
+        public RoleService roleService
+        {
+            get
+            {
+                if (_roleService == null)
+                {
+                    _roleService = new RoleService(_context);
+                }
+                return _roleService;
             }
         }
 

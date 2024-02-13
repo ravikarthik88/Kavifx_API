@@ -2,6 +2,7 @@
 using Kavifx_API.Models;
 using Kavifx_API.Services.Repository;
 using KavifxApp.Server.Helpers;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace Kavifx_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("CrossPolicy")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration config;
@@ -25,7 +27,7 @@ namespace Kavifx_API.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody]LoginViewModel login)
+        public async Task<IActionResult> Login(LoginViewModel login)
         {
             var user = await AuthenticateUser(login.email, login.password);
             if (user == null)
@@ -39,16 +41,23 @@ namespace Kavifx_API.Controllers
 
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] UserViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (UserExists(model.Email))
+            if (ModelState.IsValid)
             {
-                return BadRequest("User Already Exists");
-            }
-
-            bool Added = await uw.userService.CreateUserAsync(model);           
-            if(Added == true)
-            {
+                if (UserExists(model.Email) == true)
+                {
+                    return BadRequest("User Already Exists");
+                }
+                var user = new User
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Password = Bcrypt.Encryptpassword(model.Password)
+                };
+                await ctx.Users.AddAsync(user);
+                uw.SaveChangesAsync();
                 return Ok("User Is Added Successfully");
             }
             return BadRequest("User is not Added");
