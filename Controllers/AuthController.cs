@@ -39,7 +39,7 @@ namespace Kavifx_API.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
                 if (await UserExists(model.Email))
                 {
@@ -56,7 +56,10 @@ namespace Kavifx_API.Controllers
                 await ctx.SaveChangesAsync();
                 return Ok("User Is Added Successfully");
             }
-            return BadRequest("User is not Added");
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }      
 
         private async Task<bool> UserExists(string email)
