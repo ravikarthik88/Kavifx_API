@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kavifx_API.Controllers
-{
+{   
     [Route("api/[controller]")]
-    [ApiController]
-    [EnableCors("CrossPolicy")]
+    [ApiController]    
     public class UserController : ControllerBase
     {
         private readonly KavifxDbContext ctx;

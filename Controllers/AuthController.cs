@@ -11,8 +11,7 @@ using System.Security.Claims;
 namespace Kavifx_API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    [EnableCors("CrossPolicy")]
+    [ApiController]    
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration config;

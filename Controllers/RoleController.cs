@@ -9,7 +9,6 @@ namespace Kavifx_API.Controllers
 {
     [Route("api/[controller]")]    
     [ApiController]
-    [EnableCors("CrossPolicy")]
     public class RoleController : ControllerBase
     {
         private readonly KavifxDbContext ctx;

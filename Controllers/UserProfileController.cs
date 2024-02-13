@@ -15,32 +15,26 @@ namespace Kavifx_API.Controllers
             env = environment;
         }
 
-        [HttpPost("UploadImage")]
-        public async Task<IActionResult> UploadImage(int UserId,IFormFile profilePicture)
+        [HttpPost("Profile")]
+        public async Task<IActionResult> CreateUserProfile(int UserId,UserProfileViewModel model)
         {
-
-            if(profilePicture!=null && profilePicture.Length > 0)
+            if (ModelState.IsValid)
             {
-                var UploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-                if (!Directory.Exists(UploadDir))
-                {
-                    Directory.CreateDirectory(UploadDir);
-                }
-                var filename = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);
-                var filepath = Path.Combine(UploadDir, filename);
-                using (var stream = new FileStream(filepath, FileMode.Create))
-                {
-                    await profilePicture.CopyToAsync(stream);
-                }
                 var userProfile1 = new UserProfile
                 {
-                    PictureURL = filepath
+                    UserId = UserId,
+                    PhoneNumber = model.PhoneNumber,
+                    DateOfBirth = model.DateOfBirth,
+                    Organization_Name = model.Organization_Name,
+                    Location = model.Location,
+                    ProfilePictureUrl = model.ProfilePictureUrl
                 };
                 await ctx.UserProfiles.AddAsync(userProfile1);
                 await ctx.SaveChangesAsync();
+                return Ok("User Profile is Added Successfully");
             }
 
-            return Ok("Image Uploaded Successfully");
+            return BadRequest("User Profile is not Added");
         }
     }
 }
