@@ -35,8 +35,8 @@ namespace Kavifx_API.Controllers
                     await profilePicture.CopyToAsync(stream);
                 }
                 var userProfile1 = new UserProfile
-                {                  
-                    ProfilePictureUrl = filepath
+                {
+                    PictureURL = filepath
                 };
                 await ctx.UserProfiles.AddAsync(userProfile1);
                 await ctx.SaveChangesAsync();
