@@ -16,32 +16,22 @@ namespace Kavifx_API.Action_Stores.Services
             ctx = context;
         }
 
-        public async Task<bool> CreateUserAsync(UserDTO userDTO)
+        public async Task<bool> CreateUserAsync(UserViewModel model)
         {            
             var user = new User
             {
-                Firstname = userDTO.FirstName,
-                LastName = userDTO.LastName,
-                Email = userDTO.Email,
-                Password = Bcrypt.Encryptpassword(userDTO.Password)                
+                Firstname = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Password = Bcrypt.Encryptpassword(model.Password)                
             };
-
             await ctx.Users.AddAsync(user);
-            
-            var userprofile = new UserProfile
+            var profile = new UserProfile
             {
                 UserId = user.UserId,
+                PictureURL = model.ProfilePictureUrl
             };
-
-            await ctx.UserProfiles.AddAsync(userprofile);
-            
-            var profiledata = new ProfilePicture
-            {
-                PictureData = userDTO.ProfilePicture,
-                PictureMimeType = userDTO.ProfilePicture.
-            };
-
-            await ctx.Profiles.AddAsync(profiledata);
+            await ctx.UserProfiles.AddAsync(profile);
             return true;
         }
 
@@ -74,11 +64,11 @@ namespace Kavifx_API.Action_Stores.Services
             }
         }
 
-        public async Task<List<UserDTO>> GetAllUsersAsync()
+        public async Task<List<UserViewModel>> GetAllUsersAsync()
         {
             var Users = await (from c in ctx.Users
                                where c.IsDeleted == false
-                               select new UserDTO
+                               select new UserViewModel
                                {
                                    UserId = c.UserId,
                                    FirstName = c.Firstname,
@@ -89,11 +79,11 @@ namespace Kavifx_API.Action_Stores.Services
             return Users;
         }
 
-        public async Task<UserDTO> GetUserByEmailAsync(string email)
+        public async Task<UserViewModel> GetUserByEmailAsync(string email)
         {
             var user = await (from c in ctx.Users
                               where c.Email == email && c.IsDeleted == false
-                              select new UserDTO
+                              select new UserViewModel
                               {
                                   UserId = c.UserId,
                                   FirstName = c.Firstname,
@@ -104,11 +94,11 @@ namespace Kavifx_API.Action_Stores.Services
             return user;
         }
 
-        public async Task<UserDTO> GetUserByIdAsync(int userId)
+        public async Task<UserViewModel> GetUserByIdAsync(int userId)
         {
             var user = await (from c in ctx.Users
                               where c.UserId == userId && c.IsDeleted == false
-                              select new UserDTO
+                              select new UserViewModel
                               {
                                   UserId = c.UserId,
                                   FirstName = c.Firstname,
@@ -119,42 +109,20 @@ namespace Kavifx_API.Action_Stores.Services
             return user;
         }
 
-        public async Task<bool> UpdateUserAsync(int userId, UserDTO userDTO)
+        public async Task<bool> UpdateUserAsync(int userId, UserViewModel model)
         {
             var user = await (from c in ctx.Users
-                              where c.UserId == userDTO.UserId && c.IsDeleted == false
+                              where c.UserId == model.UserId && c.IsDeleted == false
                               select c).FirstOrDefaultAsync();
             if (user != null)
             {
-                user.Firstname = userDTO.FirstName;
-                user.LastName = userDTO.LastName;
-                user.Email = userDTO.Email;
+                user.Firstname = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
                 ctx.Users.Update(user);
                 return true;
             }
             return false;
-        }
-
-        [HttpPost]
-        public async Task<string> UploadImage(IFormFile file)
-        {           
-
-            if (file != null && file.Length > 0)
-            {
-                var UploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-                if (!Directory.Exists(UploadDir))
-                {
-                    Directory.CreateDirectory(UploadDir);
-                }
-                var filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var filepath = Path.Combine(UploadDir, filename);
-                using (var stream = new FileStream(filepath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-                return filepath;
-            }
-            return string.Empty;
-        }
+        }       
     }
 }

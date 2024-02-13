@@ -18,11 +18,10 @@ namespace Kavifx_API.Controllers
         private readonly IConfiguration config;
         private readonly KavifxDbContext ctx;
         private readonly UnitOfWork uw;
-        public AuthController(IConfiguration configuration,KavifxDbContext context,UnitOfWork unitOfWork)
+        public AuthController(IConfiguration configuration,KavifxDbContext context)
         {
             config = configuration;
-            ctx = context;
-            uw = unitOfWork;
+            ctx = context;            
         }
 
         [HttpPost("Login")]
@@ -40,15 +39,14 @@ namespace Kavifx_API.Controllers
 
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] UserDTO model)
+        public async Task<IActionResult> Register([FromBody] UserViewModel model)
         {
             if (UserExists(model.Email))
             {
                 return BadRequest("User Already Exists");
             }
 
-            bool Added = await uw.userService.CreateUserAsync(model);
-            uw.SaveChangesAsync();
+            bool Added = await uw.userService.CreateUserAsync(model);           
             if(Added == true)
             {
                 return Ok("User Is Added Successfully");

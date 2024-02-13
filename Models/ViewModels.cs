@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kavifx_API.Models
 {
-    public class UserDTO
+    public class UserViewModel
     {
         public int UserId { get; set; }
         [Required]
@@ -19,29 +19,31 @@ namespace Kavifx_API.Models
         [Required,DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
-        public byte[] ProfilePicture { get; set; }
+        [NotMapped]
+        public IFormFile ProfilePicture { get; set; }
+        public string ProfilePictureUrl { get; set; }
     }  
 
-    public class RoleDTO
+    public class RoleViewModel
     {   public int RoleId { get; set; }
         public string RoleName { get; set; }     
     }
 
-    public class UserRoleDTO
+    public class UserRoleViewModel
     {
         public int UserRoleId { get; set; }
         public int UserId { get; set; }
         public int RoleId { get; set; }        
     }
 
-    public class PermissionDTO
+    public class PermissionViewModel
     {
         public int PermissionId { get; set; }
         public string PermissionName { get; set; }
         public string Description { get; set; }
     }
 
-    public class RolePermissionDTO
+    public class RolePermissionViewModel
     {
         public int RolePermissionId { get; set; }
         public int RoleId { get; set; }

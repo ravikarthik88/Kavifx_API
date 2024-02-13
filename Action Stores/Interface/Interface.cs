@@ -12,22 +12,22 @@ namespace Kavifx_API.Services.Interface
     }
     public interface IUserService
     {
-        Task<List<UserDTO>> GetAllUsersAsync();
-        Task<UserDTO> GetUserByIdAsync(int userId);
-        Task<UserDTO> GetUserByEmailAsync(string email);        
+        Task<List<UserViewModel>> GetAllUsersAsync();
+        Task<UserViewModel> GetUserByIdAsync(int userId);
+        Task<UserViewModel> GetUserByEmailAsync(string email);        
         bool EmailExists(string email);
-        Task<bool> CreateUserAsync(UserDTO userDTO);
-        Task<bool> UpdateUserAsync(int userId, UserDTO userDTO);
+        Task<bool> CreateUserAsync(UserViewModel model);
+        Task<bool> UpdateUserAsync(int userId, UserViewModel model);
         Task<bool> DeleteUserAsync(int userId);
     }    
     public interface IRoleService
     {
-        Task<List<RoleDTO>> GetAllRolesAsync();
+        Task<List<RoleViewModel>> GetAllRolesAsync();
         Task<Role> GetRoleByIdAsync(int roleId);
         Task<Role> GetRoleByNameAsync(string roleName);
         Task<bool> RoleExistsAsync(string roleName);
-        Task<bool> CreateRoleAsync(RoleDTO roleDTO);
-        Task<bool> UpdateRoleAsync(RoleDTO roleDTO);
+        Task<bool> CreateRoleAsync(RoleViewModel role);
+        Task<bool> UpdateRoleAsync(RoleViewModel role);
         Task<bool> DeleteRoleAsync(int roleId);
     }
 
@@ -41,8 +41,8 @@ namespace Kavifx_API.Services.Interface
 
     public interface IPermissionService
     {
-        Task<List<PermissionDTO>> GetAllPermissionsAsync();
-        Task<bool> CreatePermissionAsync(PermissionDTO permissionDTO);
+        Task<List<PermissionViewModel>> GetAllPermissionsAsync();
+        Task<bool> CreatePermissionAsync(PermissionViewModel model);
         Task<bool> DeletePermissionAsync(int permissionId);
     }
 
@@ -50,7 +50,7 @@ namespace Kavifx_API.Services.Interface
     {
         Task<bool> AssignPermissionAsync(int roleId, int permissionId);
         Task<bool> RemovePermissionAsync(int roleId, int permissionId);
-        Task<List<PermissionDTO>> GetRolePermissionsAsync(int roleId);
+        Task<List<PermissionViewModel>> GetRolePermissionsAsync(int roleId);
     }
    
     #endregion
