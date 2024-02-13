@@ -27,10 +27,7 @@ namespace Kavifx_API.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }       
-        public bool IsDeleted { get; set; } = false;        
-        public Role Role { get; set; }       
-        public UserProfile UserProfile { get; set; }
-
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class UserProfile
