@@ -1,5 +1,4 @@
 ﻿using Kavifx_API.Models;
-using Kavifx_API.Services.Repository;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,6 @@ namespace Kavifx_API.Controllers
     [EnableCors("CrossPolicy")]
     public class RoleController : ControllerBase
     {
-        private readonly UnitOfWork uw;
         private readonly KavifxDbContext ctx;
 
         public RoleController(KavifxDbContext dbContext)
@@ -56,7 +54,7 @@ namespace Kavifx_API.Controllers
                     RoleName = role.RoleName
                 };
                 await ctx.Roles.AddAsync(role1);
-                uw.SaveChangesAsync();
+                await ctx.SaveChangesAsync();
                 return Ok("Role is Added Successfully");
             }
             return BadRequest("Role is Not Added");
@@ -97,8 +95,8 @@ namespace Kavifx_API.Controllers
         private async Task<bool> RoleExists(string RoleName)
         {
             bool IsExists = false;
-            var role = await uw.roleService.RoleExistsAsync(RoleName);
-            if (role == true)
+            var role = await ctx.Roles.FindAsync(RoleName);
+            if (role != null)
             {
                 IsExists = true;
             }

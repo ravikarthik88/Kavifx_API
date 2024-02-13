@@ -18,8 +18,19 @@ namespace Kavifx_API.Models
         [Required,DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }        
-    }  
+    }
+    public class UserProfileViewModel
+    {
+        public int UserId { get; set; }
+        public string PhoneNumber { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Organization_Name { get; set; }
+        public string Location { get; set; }
 
+        [NotMapped]
+        public IFormFile ProfilePicture { get; set; }
+        public string ProfilePictureUrl { get; set; }
+    }
     public class RoleViewModel
     {   public int RoleId { get; set; }
         public string RoleName { get; set; }     

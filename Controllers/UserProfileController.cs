@@ -1,6 +1,4 @@
 ﻿using Kavifx_API.Models;
-using Kavifx_API.Services.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kavifx_API.Controllers
@@ -11,7 +9,7 @@ namespace Kavifx_API.Controllers
     {
         private readonly KavifxDbContext ctx;       
         private readonly IWebHostEnvironment env;
-        public UserProfileController(KavifxDbContext dbContext,UnitOfWork unitOfWork,IWebHostEnvironment environment)
+        public UserProfileController(KavifxDbContext dbContext,IWebHostEnvironment environment)
         {
             ctx = dbContext;
             env = environment;

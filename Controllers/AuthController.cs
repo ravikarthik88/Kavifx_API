@@ -1,6 +1,4 @@
-﻿using Kavifx_API.Action_Stores;
-using Kavifx_API.Models;
-using Kavifx_API.Services.Repository;
+﻿using Kavifx_API.Models;
 using KavifxApp.Server.Helpers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -18,8 +16,7 @@ namespace Kavifx_API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration config;
-        private readonly KavifxDbContext ctx;
-        private readonly UnitOfWork uw;
+        private readonly KavifxDbContext ctx;        
         public AuthController(IConfiguration configuration,KavifxDbContext context)
         {
             config = configuration;
@@ -45,7 +42,7 @@ namespace Kavifx_API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (UserExists(model.Email) == true)
+                if (await UserExists(model.Email))
                 {
                     return BadRequest("User Already Exists");
                 }
@@ -57,17 +54,17 @@ namespace Kavifx_API.Controllers
                     Password = Bcrypt.Encryptpassword(model.Password)
                 };
                 await ctx.Users.AddAsync(user);
-                uw.SaveChangesAsync();
+                await ctx.SaveChangesAsync();
                 return Ok("User Is Added Successfully");
             }
             return BadRequest("User is not Added");
         }      
 
-        private bool UserExists(string Email)
+        private async Task<bool> UserExists(string email)
         {
             bool IsExists = false;
-            var User = uw.userService.EmailExists(Email);
-            if (User == true) 
+            var userExists = await ctx.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (userExists != null) 
             {
                 IsExists = true;
             }
@@ -117,7 +114,7 @@ namespace Kavifx_API.Controllers
         private bool VerifyPassword(string password1,string password2)
         {
             bool Verify = false;
-            if (string.IsNullOrEmpty(password1))
+            if (!string.IsNullOrEmpty(password1))
             {
                 
                 string DecryptPassword = Bcrypt.Decryptpassword(password1);

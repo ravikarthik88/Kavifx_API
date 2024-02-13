@@ -1,13 +1,8 @@
-using Kavifx_API.Action_Stores.Services;
 using Kavifx_API.Models;
-using Kavifx_API.Services.Interface;
-using Kavifx_API.Services.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NuGet.Protocol.Core.Types;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +21,7 @@ builder.Services.AddCors(c =>
     });
 });
 
-builder.Services.AddTransient<UnitOfWork>();
+//builder.Services.AddTransient<UnitOfWork>();
 
 //Enable JWT Authentication
 byte[] keybytes = System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWTDATA:Key").Value);

@@ -36,9 +36,13 @@ namespace Kavifx_API.Models
     public class UserProfile
     {
         [Key]
-        public int ProfilePicId { get; set; }
-        public int UserId { get; set; }
-        public string PictureURL { get; set; }
+        public int UserProfileId { get; set; }
+        public int UserId { get; set; }      
+        public string PhoneNumber { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Organization_Name { get; set; }
+        public string Location { get; set; }      
+        public string ProfilePictureUrl { get; set; }
         public bool IsDeleted { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
