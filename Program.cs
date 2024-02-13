@@ -12,17 +12,6 @@ builder.Services.AddDbContext<KavifxDbContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Enable Cors Policy
-builder.Services.AddCors(c =>
-{
-    c.AddPolicy("CrossPolicy", copl =>
-    {
-        copl.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    });
-});
-
-//builder.Services.AddTransient<UnitOfWork>();
-
 //Enable JWT Authentication
 byte[] keybytes = System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWTDATA:Key").Value);
 builder.Services.AddAuthentication(opt =>
@@ -61,13 +50,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -78,8 +60,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();
-
-app.UseCors();
 
 app.MapControllers();
 
